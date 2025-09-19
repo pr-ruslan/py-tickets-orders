@@ -94,6 +94,14 @@ class TicketSerializer(serializers.ModelSerializer):
             "movie_session"
         )
 
+    def validate(self, attrs):
+        Ticket.validate_seat(
+            attrs["seat"],
+            attrs["movie_session"].cinema_hall.seats_in_row,
+            serializers.ValidationError
+        )
+        return attrs
+
 
 class TicketCreateSerializer(TicketSerializer):
     movie_session = PrimaryKeyRelatedField(
