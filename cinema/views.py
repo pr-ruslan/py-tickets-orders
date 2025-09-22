@@ -1,3 +1,5 @@
+from typing import List
+
 from rest_framework import viewsets
 
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
@@ -44,6 +46,33 @@ class MovieViewSet(viewsets.ModelViewSet):
             return MovieDetailSerializer
 
         return MovieSerializer
+
+    def get_queryset(self):
+
+        def get_ids(param_str: str) -> List[int]:
+            return [int(id) for id in param_str.split(",") if id.isdigit()]
+
+        queryset = Movie.objects.all()
+        if self.action == "list":
+            queryset = queryset.prefetch_related("genres", "actors")
+
+        params = self.request.query_params
+
+        actors = params.get("actors")
+        if actors is not None:
+            actor_ids = get_ids(actors)
+            queryset = queryset.filter(actors__id__in=actor_ids)
+
+        genres = params.get("genres")
+        if genres is not None:
+            genre_ids = get_ids(genres)
+            queryset = queryset.filter(genres__id__in=genre_ids)
+
+        title = params.get("title")
+        if title is not None:
+            queryset = queryset.filter(title__icontains=title)
+
+        return queryset.distinct()
 
 
 class MovieSessionViewSet(viewsets.ModelViewSet):
