@@ -89,9 +89,9 @@ class Ticket(models.Model):
                       seats_in_row: int,
                       error_to_raise):
         if not (1 <= seat_num <= seats_in_row):
-            raise error_to_raise({
-               "seat": f"seat must be in the range [1, {seats_in_row}]"
-           })
+            raise error_to_raise(
+                {"seat": f"seat must be in the range [1, {seats_in_row}]"}
+            )
 
     def clean(self):
         Ticket.validate_seat(self.seat,
