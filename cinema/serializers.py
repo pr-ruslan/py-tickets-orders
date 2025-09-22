@@ -57,9 +57,9 @@ class MovieDetailSerializer(MovieSerializer):
 
 class MovieSessionSerializer(serializers.ModelSerializer):
     movie = serializers.PrimaryKeyRelatedField(queryset=Movie.objects.all())
-    cinema_hall = (serializers.
-                   PrimaryKeyRelatedField(queryset=CinemaHall.objects.all())
-                   )
+    cinema_hall = (
+        serializers.PrimaryKeyRelatedField(queryset=CinemaHall.objects.all())
+    )
 
     movie_title = serializers.CharField(source="movie.title", read_only=True)
     cinema_hall_name = serializers.CharField(
